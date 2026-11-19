@@ -23,6 +23,10 @@ Tiêu chí đã ký ở Phiếu A. Từ phút 65 bàn mới được chạy tr�
 
 ## B0 · Nhật ký lần chạy vòng 1
 
+**Đối chiếu bổ sung CP1–CP3 ngày 19/11/2026:** tiêu chí `69d355e4` còn nguyên; ký 15:52:32, commit `1a3786d` 15:52:42, reflog `origin/main` ghi `update by push` 15:52:44 GMT+7. Nhật ký có lần đo sớm nhất `R-base-before-20261119-160101-b45eeb` lúc 16:01:01; file report của lượt này không còn trên máy, không tạo lại. Baseline 16:06:03 ở bảng là lượt còn đủ report/trace, không phải lần chạy đầu tiên. Không thấy lần đo trước ký trong các nhật ký đã lưu; chưa xác minh các máy khác.
+
+Bản chốt cũ `0149d25` (`a1af532b`, 15:59:04) bị revert bởi `b02baf6`; bản hiện tại `32d5efc2` chốt 17:44:46, sau nhận S6 tại `528560a` 16:31:27. Kiểm tra lại: criteria/history/checkpoint/integrity đều đạt trên file hiện tại, 13/13 test công khai đạt, gate prepared không có ca mới hỏng. Giữ nguyên B8 và các snapshot; **CP3 đủ nội dung kỹ thuật, chưa đạt xác nhận thứ tự trước sự cố**, cần Coach kết luận. Không dùng snapshot muộn để nhận điểm chuẩn bị trước sự cố. Báo cáo S6 đầu tiên của lượt hoàn thiện này được chạy trước sửa tiếp: `R-S6-grade-20261119-194015-6e5a09`; phân tích ở Phiếu C.
+
 *Yêu cầu: ít nhất 3 lần chạy, mỗi lần đổi một thứ, có mã lần chạy và khoảng tin cậy.* Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi
 một dòng vào `runs/journal.jsonl`. Việc của bàn là điền cột "Đổi MỘT thứ gì" (tham số `--note`) và cột "Kết luận".
 Mọi con số trong quyết định Gate 1 phải trỏ về một dòng ở đây hoặc ở Phiếu C mục C0.
