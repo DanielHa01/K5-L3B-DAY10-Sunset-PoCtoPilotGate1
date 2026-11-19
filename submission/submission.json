@@ -3,14 +3,15 @@
   "members": [
     "HaPhanDaiDuong-2A202604119",
     "NguyenHuuAn-2A202604024",
-    "LeBaNguyen-2A202604100"
+    "LeBaNguyen-2A202604100",
+    "NguyenVanTuan-2A202604121"
   ],
   "incident": "S6",
   "decision_v1": "Cải tiến thêm",
-  "decision_v2": "",
+  "decision_v2": "Dừng",
   "three_lines": {
-    "environment_assumption": "",
-    "reduce_or_prevent": "",
-    "measure_in_pilot": ""
+    "environment_assumption": "Thiết kế dựa vào tracking từng kiện chính xác và mọi nguồn ghi cùng dùng một sổ lỗi theo ngày; khi dữ liệu sai hoặc nhiều worker kiểm–ghi không nguyên tử, trần 2 lỗi tự động/hãng/ngày chưa được bảo đảm.",
+    "reduce_or_prevent": "Cổng ngăn tự ghi tiền/lỗi khi nhiều kiện trễ chưa rõ đối tượng và ngăn lỗi tự động thứ 3 trên sổ tuần tự; hai monitor chỉ phát hiện tín hiệu, giảm thời gian bỏ sót khi người trực phản ứng, không sửa được tracking nguồn sai.",
+    "measure_in_pilot": "Trước Gate 2 cần đo chất lượng tracking, tranh chấp lỗi hãng, độ trễ phát hiện/dừng, tải duyệt thực so với 6 ca/giờ, chi phí so với 8.000đ/ticket và ROI 0,25; kết quả mock chưa thay bằng chứng pilot thật."
   }
 }

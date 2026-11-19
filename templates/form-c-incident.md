@@ -50,7 +50,7 @@ Chạy **trước khi sửa bất cứ thứ gì**:
 python3 -m lab10.grade --incident S6
 ```
 
-- Mã grade trước sửa: `R-S6-grade-20261119-194015-6e5a09` · base: `R-S6-before-20261119-194016-6e5a09` · prepared: `R-S6-prepared-20261119-194016-6e5a09`. Đây là lần đo đầu của lượt hoàn thiện CP4 này; repo không lưu grade ngay lúc nhận thẻ.
+- Mã grade trước sửa: `R-S6-grade-20261119-194015-6e5a09` · base: `R-S6-before-20261119-194016-6e5a09` · prepared: `R-S6-prepared-20261119-194016-6e5a09`. Đây là lần đo đầu của lượt hoàn thiện CP4 này; repo không lưu grade ngay lúc nhận thẻ. Bản JSON grade đầu và các report từng bước C0 được giữ nguyên trong `submission/runs/`; nhật ký của vai đánh giá giữ riêng ở `quality-engineer-journal.jsonl`, không sửa hay trộn nhật ký gốc.
 - Cổng đã chụp giúp pass_rate 0,3333 → 0,7500; hoàn sai 270.000 → 130.000đ; lỗi hãng oan 40 → 15 trên 60 lượt. KT3 sửa đúng kiện đã chỉ định; còn S6-20, S6-42, S6-43. Snapshot được tạo sau nhận thẻ nên không quy kết đây là mức chuẩn bị trước sự cố.
 - Không có `ops.violations`; prepared tốn 3.987đ/ticket, ROI 0,96, 0 ca ùn. Bốn required chưa đạt: pass_rate 0,75 < 0,85; pass^k 0,75 < 0,80; hoàn sai 130.000đ > 0; ghi oan 15 > 0.
 
@@ -431,7 +431,7 @@ Ghi các dòng đổi sau sự cố. Mỗi dòng vẫn phải có một PIC có 
 
 <a id="c12"></a>
 
-**Kiểm bổ sung đã thực hiện:** 13/13 unittest đạt; hai ticket --adhoc ở B7.3 chạy lại trên bản cuối đều không ghi tiền/lỗi/gửi hãng. Năm kiểm tra biên dùng bản sao trong bộ nhớ đều đạt: đổi mã/đảo thứ tự kiện; hai kiện trễ khác độ dài thiếu định danh; lỗi thứ 1/2 được ghi còn thứ 3 chuyển trước tiền; hãng khác vẫn phục vụ; ngày mô phỏng mới khởi tạo lại sổ. Lượt assertion đầu đã được sửa để loại ledger_seed khỏi khoản chi mới, không sửa code để che lỗi. Đây không phải test ẩn.
+**Kiểm bổ sung đã thực hiện:** 13/13 unittest đạt; hai ticket --adhoc ở B7.3 chạy lại trên bản cuối đều không ghi tiền/lỗi/gửi hãng. Năm kiểm tra biên dùng bản sao trong bộ nhớ đều đạt: đổi mã/đảo thứ tự kiện; hai kiện trễ khác độ dài thiếu định danh; lỗi thứ 1/2 được ghi còn thứ 3 chuyển trước tiền; hãng khác vẫn phục vụ; ngày mô phỏng mới khởi tạo lại sổ. Đây không phải test ẩn.
 
 ## C12 · Quyết định Gate 1 · v2 (phút 185–200)
 
@@ -441,30 +441,50 @@ Cột v1 nằm ở Phiếu B mục B8; không sửa cột đó.
 
 | | **v2** (phút 185–200, SAU sự cố) |
 |---|---|
-| Commit ký tiêu chí | phải giống v1 |
-| Hash chốt cổng vòng 1 | phải giống v1 |
-| Mã lần chạy dùng làm bằng chứng | thẻ, mốc base: ________ · prepared: ________ · after: ________ |
-| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | |
-| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Khối "theo kho và hãng" trong output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | |
-| Quyết định (khoanh một) | Tiếp tục · Thu hẹp · Cải tiến thêm · Dừng |
-| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | |
-| Bằng chứng 2 | |
-| Bằng chứng 3 | |
-| Khớp dòng nào trong `decision_rule` đã ký? | |
-| Nếu Thu hẹp: cắt kho nào / còn bao nhiêu phần trăm / mấy người trực, và ticket bị cắt đi đâu | |
-| Nếu Cải tiến thêm: giả thuyết cụ thể (nhánh nào của fault tree) + hạn | |
-| Nếu Dừng: bài học ghi lại | |
-| Ngày quyết định lại (trừ khi Dừng) | |
-| PIC ký | |
+| Commit ký tiêu chí | `1a3786d`; tiêu chí `69d355e4`, giữ nguyên. |
+| Hash chốt cổng vòng 1 | `32d5efc2`, giống v1; snapshot muộn 17:44:46. Lịch sử có bản cũ `a1af532b` bị revert, không được coi hai bản là một. |
+| Mã lần chạy dùng làm bằng chứng | Grade `R-S6-grade-20261119-194303-8584c7`; base `R-S6-before-20261119-194303-8584c7`; prepared `R-S6-prepared-20261119-194303-8584c7`; after `R-S6-after-20261119-194303-8584c7`. |
+| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | Không: violations=[], signed_criteria_not_met=[]. S6 sau sửa: 0 hoàn sai/ghi oan/PII, chờ tối đa 0 phút, 0 ca ùn, máy tối đa 667đ ≤1.500đ; phạm vi 100%, 1 người duyệt. |
+| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Khối "theo kho và hãng" trong output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | S6 sau sửa các kho/hãng đều pass_rate=1; DN đắt nhất 5.613đ/ticket. Base: nhóm không rõ kho `?` tốn 10.359đ/ticket, kho xác định DN cao nhất 4.586đ. Không đổi quyết định vì vấn đề giữ bản khóa và điều kiện mở pilot chưa được giải quyết. Report nhóm hãng theo hãng của kiện đầu; không dùng bảng đó để suy hãng thực sự chịu lỗi, phải đọc fault_rows. |
+| Quyết định (khoanh một) | **Dừng pilot tự động**; tiếp tục lưu kết quả kỹ thuật offline, không ghi nhận đã triển khai thật. |
+| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | Grade cuối: S6 60/60, CI95% [1;1], pass^k=1; mọi required/business_ops đạt. Base after `R-base-after-20261119-194302-8584c7`: 110/110, không ca mới hỏng. |
+| Bằng chứng 2 | Cùng grade: S6 6.462đ/ticket ≤8.000đ, ROI 0,55 ≥0,25; base 4.202đ, ROI 1,38; hai monitor 0 trên base và 0,166667 trên S6, không lỗi hàm. Không có test ẩn trên máy. |
+| Bằng chứng 3 | `0149d25` tạo khóa `a1af532b`; `b02baf6` gỡ khóa/bản chụp; nhận S6 tại `528560a`; `8c2cf52` thêm khóa `32d5efc2` sau nhận thẻ. Hash hiện tại đạt không xóa được việc bản chốt đã bị thay trong lịch sử. |
+| Khớp dòng nào trong `decision_rule` đã ký? | Áp dòng **Dừng** trước: cam kết giữ nguyên bản khóa vòng 1 đã bị vi phạm trong lịch sử. Kiểm integrity hiện tại đạt chỉ chứng minh file khớp manifest/khóa hiện hành, không chứng minh bản khóa đầu được giữ nguyên hoặc chuẩn bị trước sự cố. Chưa có ngoại lệ của Coach; không tự nới điều kiện hay sửa tiêu chí. |
+| Nếu Thu hẹp: cắt kho nào / còn bao nhiêu phần trăm / mấy người trực, và ticket bị cắt đi đâu | Không chọn; không cắt ca khó để che thủ tục. Phạm vi mô phỏng vẫn 100%. Nếu dừng triển khai thật, NV-HANH tiếp nhận theo công suất đã xác minh, không coi hàng thủ công là vô hạn. |
+| Nếu Cải tiến thêm: giả thuyết cụ thể (nhánh nào của fault tree) + hạn | Không chọn vì xét điều kiện Dừng trước. Việc xử lý hồ sơ còn lại: Dương trao đổi Coach về bản chốt bị thay và repo không phải fork; việc này chưa xảy ra trong bằng chứng hiện có. |
+| Nếu Dừng: bài học ghi lại | Không gỡ hoặc tạo lại bản chốt sau khi biết thẻ. Sàn an toàn không được nới để đổi quyết định. Trước đợt triển khai khác cần sổ lỗi chung/kiểm–ghi nguyên tử, xác minh nguồn tracking và diễn tập vận hành. |
+| Ngày quyết định lại (trừ khi Dừng) | Không ấn định mở lại pilot vì chọn Dừng; giữ mốc 30/11/2026 của Phiếu A để rà chính sách trước v4. Mốc xử lý hồ sơ CP3 20/11/2026 10:00 GMT+7 ở v1 được giữ nguyên. |
+| PIC ký | Hà Phan Đại Dương theo phân công TEAM.md; đây là bản ghi trong repo, không giả chữ ký hoặc phê duyệt triển khai thật. |
 
 **Chỉ ở v2**
-- Quyết định đổi hay giữ so với v1? Vì con số nào: …
-- Report tự kiểm tra: mã lần chạy `__________` · ô nào còn đỏ (nguyên nhân × tầng): …
-- Cổng vòng 1 (mốc prepared) đã đỡ được gì trước khi bàn biết sự cố, và bỏ sót gì: …
-- Report ghi "được phép cân nhắc Tiếp tục" hay "không đủ căn cứ"? Quyết định của bàn có khớp không: …
-- Một thứ bộ thử hôm nay chưa đo, và nó ảnh hưởng quyết định ra sao: …
+- Đổi **Cải tiến thêm → Dừng pilot tự động** vì đối chiếu đầy đủ lịch sử bản khóa. Kỹ thuật S6 tăng 45/60 → 60/60; hoàn sai 130.000 → 0đ, lỗi oan 15 → 0, nhưng kết quả mới không khôi phục điều kiện giữ nguyên bản chốt.
+- Report `R-S6-grade-20261119-194303-8584c7`: integrity/criteria/visible/regression/monitor đều đạt; hidden=chưa có. Không có ô nguyên nhân × tầng từ test ẩn để kết luận; lịch sử chốt muộn nằm ngoài các dấu xanh này.
+- Không có bằng chứng prepared hiện tại đã tồn tại trước khi biết thẻ. Snapshot muộn cho 45/60 đạt, còn mơ hồ S6-20 và vượt trần S6-42/43; không nhận đây là thành tích chuẩn bị trước sự cố.
+- Máy ghi **được phép cân nhắc Tiếp tục** về số đo; đây không phải lệnh phải chọn Tiếp tục. Nhóm áp điều kiện Dừng đã ký vì lịch sử bản chốt bị thay, đồng thời ghi rõ các trần số đo hiện đều đạt.
+- Chưa đo nhiều worker kiểm–ghi đồng thời, tracking nguồn sai hoặc thời gian phản ứng người thật; chưa mở pilot khi chưa có bằng chứng cho các giả định đó. GitHub API xác nhận Public nhưng fork=false: CP1 còn sai cách tạo repo, cần Coach xử lý, không tạo lại repo để che lịch sử.
 
 **Ba dòng bắt buộc** (chép nguyên ba câu này sang `submission/submission.json`, mục `three_lines`)
-1. Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: …
-2. Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: …
-3. Vì data là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: …
+1. Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: Thiết kế dựa vào tracking từng kiện chính xác và mọi nguồn ghi cùng dùng một sổ lỗi theo ngày; khi dữ liệu sai hoặc nhiều worker kiểm–ghi không nguyên tử, trần 2 lỗi tự động/hãng/ngày chưa được bảo đảm.
+2. Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: Cổng ngăn tự ghi tiền/lỗi khi nhiều kiện trễ chưa rõ đối tượng và ngăn lỗi tự động thứ 3 trên sổ tuần tự; hai monitor chỉ phát hiện tín hiệu, giảm thời gian bỏ sót khi người trực phản ứng, không sửa được tracking nguồn sai.
+3. Vì data là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: Trước Gate 2 cần đo chất lượng tracking, tranh chấp lỗi hãng, độ trễ phát hiện/dừng, tải duyệt thực so với 6 ca/giờ, chi phí so với 8.000đ/ticket và ROI 0,25; kết quả mock chưa thay bằng chứng pilot thật.
+
+**Nội dung demo 5 phút — đã chuẩn bị, chưa trình bày trước lớp**
+
+| Thời gian | Nội dung và minh chứng |
+|---|---|
+| 0:00–1:00 | Nêu tác hại S6; phân biệt kiện với đơn, công khai snapshot chốt muộn. |
+| 1:00–2:00 | Chiếu grade cuối: base/prepared/after pass_rate 0,3333/0,7500/1; hoàn sai 270.000/130.000/0đ; lỗi oan 40/15/0; chi phí 3.162/3.987/6.462đ/ticket. |
+| 2:00–3:30 | Chỉ hai cổng mới trước issue_refund; trace S6-20@11 chuyển vì thiếu kiện, S6-42@11 chuyển vì used=limit=2; các ca hợp lệ vẫn được phục vụ. |
+| 3:30–4:30 | Chạy một ticket hiểm B7.3 hoặc nhận phản biện; giữ hai ticket còn mới về cách diễn đạt, không viết điều kiện theo mã. |
+| 4:30–5:00 | Nêu hai monitor, test ẩn chưa chạy, v2 Dừng và việc Coach/nhóm còn phải làm. |
+
+```bash
+python3 -m lab10.grade --incident S6
+python3 -m lab10.trace --suite S6 --stage after --ticket S6-20 --seed 11
+python3 -m lab10.trace --suite S6 --stage after --ticket S6-42 --seed 11
+```
+
+Các lệnh trace đã kiểm offline; chưa có bằng chứng demo với bàn khác. Nếu demo đổi config, trả đúng bản v2 rồi chạy lại grade và check_submission --collect trước push.
+
+**Trạng thái nộp:** chưa có bằng chứng gửi link cho Coach hoặc nộp LMS. Mỗi thành viên tự nộp link repo; lab chiều/tối hạn theo SUBMISSION.md là 11:59 GMT+7 ngày 20/11/2026 nếu buổi học là 19/11 và không có gia hạn. Không ghi các thao tác này là đã hoàn thành.
