@@ -20,7 +20,7 @@ rồi mới chạy đánh giá. Khối 1 không sửa code.
 
 ### Câu 1.1 · Một mục tiêu cấp hệ thống (khác "model trả lời đúng")
 
-> …
+> Giảm công xử lý thỷ công và chi phí giải quyết yêu cầu hoàn tiền do giao trễ cho LogiX-VN, đồng thời đảm bảo khách hàng được hoàn đúng quyền lợi theo chính sách, giao dịch được ghi nhận đầy đủ để đối soát, hãng vận chuyển được quy trách nhiệm có căn cứ và các trường hợp vượt quyền được chuyển cho người duyệt.
 
 ### Câu 1.2 · Mục tiêu nhìn từ hai người
 
