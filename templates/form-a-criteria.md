@@ -24,8 +24,8 @@ rồi mới chạy đánh giá. Khối 1 không sửa code.
 
 ### Câu 1.2 · Mục tiêu nhìn từ hai người
 
-- Chị Oanh, kế toán đối soát (không dùng trợ lý, nhưng phải khớp sổ với hãng và shop mỗi tuần): …
-- Chị Hạnh, trưởng ca CSKH (phải duyệt những ca trợ lý chuyển sang): …
+- Chị Oanh, kế toán đối soát (không dùng trợ lý, nhưng phải khớp sổ với hãng và shop mỗi tuần): Mỗi tuần chị đối soát được sổ hoàn tiền với hãng và shop mà không phải điều tra lại từng ca: mọi khoản hoàn trong sổ cái khớp với số tiền đã báo cho khách; mọi lỗi ghi cho hãng đều đúng hãng, đúng kiện hàng và có nguyên nhân trong tracking; không có khoản trừ sai cho shop hay phạt oan hãng. Thành công nghĩa là số ca chị phải sửa tay trong tuần tiến về 0.
+- Chị Hạnh, trưởng ca CSKH (phải duyệt những ca trợ lý chuyển sang): Số ca trợ lý chuyển sang chị vừa sức một ca trực và mỗi ca đến kèm đủ thông tin để chị quyết nhanh: mọi ca chuyển được nhận xử lý trong 60 phút (`review_sla_minutes`), không ca nào bị ùn với 1 người trực (6 ca/giờ), trợ lý kèm ghi chú giải thích cho mỗi quyết định để chị chuyển từ kiểm lại 0% sang kiểm mẫu (tối thiểu 10%), và trợ lý không tự hoàn quá 300.000đ/ngày cho một khách mà không qua chị duyệt.
 
 ---
 
@@ -48,12 +48,12 @@ trợ lý có đang gây thiệt hại cho bên ngoài LogiX không; không có 
 
 | | Offline, cho MỘT bước (câu 1.3) | Telemetry production (câu 1.4) |
 |---|---|---|
-| **Bước / hành vi được đo** | | |
-| **Thước đo** (một câu, có đơn vị) | | |
-| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | |
-| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | | |
-| **Khung thời gian / ngưỡng báo động** | (không áp dụng) | |
-| **Điểm mù** (thước đo này KHÔNG thấy gì) | | |
+| **Bước / hành vi được đo** | | Bước "ghi lỗi hãng" (`file_carrier_fault`): trợ lý ghi một lỗi giao trễ cho hãng vận chuyển, bên thứ ba bị phạt tiền thật (GHSH 150.000đ, MKD 120.000đ, VNX 100.000đ, DNB 80.000đ mỗi lỗi) và có thể bị đình chỉ (GHSH, DNB sau 3 lỗi/7 ngày). |
+| **Thước đo** (một câu, có đơn vị) | | Số lỗi hãng mà trợ lý tự ghi trong một ngày nhưng hãng phản đối, hoặc tracking không ghi nguyên nhân thuộc lỗi hãng, tính trên mỗi hãng mỗi ngày (lỗi/hãng/ngày). Tín hiệu thay nhãn: phản hồi của hãng và nguyên nhân trong tracking. |
+| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | Bản ghi lỗi hãng trong sổ lỗi do trợ lý ghi và trường nguyên nhân của kiện trong tracking (mọi lỗi tự động trong ngày, không lấy mẫu). Phản hồi/khiếu nại của hãng do chị Oanh (đối soát) ghi vào kênh báo tin. Không ai gán nhãn đúng/sai từng ca; chị Oanh chỉ ghi nhận có khiếu nại hay không. |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | | Với mỗi hãng h, mỗi ngày d: tỉ lệ_nghi_oan(h,d) = (số lỗi hiệu lực hãng h trong ngày d mà tracking thiếu nguyên nhân thuộc lỗi hãng, hoặc bị hãng phản đối) / (tổng lỗi trợ lý tự ghi cho h trong ngày d); đồng thời đếm số lỗi tự động/hãng/ngày. Ngày hãng không có lỗi nào: không tính tỉ lệ (mẫu số 0), chỉ ghi "0 lỗi". Kiện thiếu dữ liệu tracking: đếm riêng và xem là nghi oan. |
+| **Khung thời gian / ngưỡng báo động** | (không áp dụng) | Đo mỗi ngày cuối ca, cộng dồn 7 ngày (khớp ngưỡng đình chỉ 7 ngày của hãng). Báo động ngay khi: (1) có ≥ 1 lỗi ghi mà tracking không có nguyên nhân lỗi hãng, hoặc (2) một hãng có ≥ 2 lỗi tự động trong ngày (`max_auto_strikes_per_carrier_per_day` = 2; từ lỗi thứ 3 phải có người duyệt), hoặc (3) hãng có ≥ 1 khiếu nại trong tuần. Báo vào `alert_channel`, NV-TUNG xem xét, có quyền tắt `file_carrier_fault`. |
+| **Điểm mù** (thước đo này KHÔNG thấy gì) | | Không thấy lỗi oan mà hãng không biết hoặc không phản đối; không thấy trường hợp chính tracking ghi sai nguyên nhân; không thấy thiệt hại với shop hay khách (hoàn thiếu, trừ sai shop, lộ dữ liệu cá nhân), cần tín hiệu riêng. |
 
 **Ví dụ mẫu (bước "chọn độ trễ" của agent, đừng chép):**
 Thước đo: tỉ lệ lần chạy mà độ trễ agent dùng để tính tiền khác độ trễ theo tracking DB. Dữ liệu: sự kiện `proposal.delay_days_used`
