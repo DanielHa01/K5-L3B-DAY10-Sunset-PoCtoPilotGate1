@@ -105,6 +105,11 @@ def _tracking(ctx, action):
     if pid:
         candidates = [(p, delay) for p, delay in checked if p["parcel_id"] == pid]
     else:
+        delayed = [p for p, delay in checked if delay > 0]
+        if len(delayed) > 1:
+            ctx.log("parcel_identity_ambiguous", order_id=order_id,
+                    delayed_parcels=[p["parcel_id"] for p in delayed])
+            raise ValueError("nhiều kiện cùng trễ nhưng ticket chưa xác định kiện; cần người xác minh trước khi ghi")
         longest = max(delay for _, delay in checked)
         candidates = [(p, delay) for p, delay in checked if delay == longest]
         if longest == 0:
@@ -136,6 +141,18 @@ def pre_guard(ctx):
     return Verdict.allow(policy_id=policy["policy_id"])
 
 
+def _carrier_limit_reached(ctx, parcel):
+    """Trần theo hãng/ngày từ Ops; sổ lỗi là nguồn đếm, không dùng mã ticket."""
+    limit = ctx.tools.ops_limits().get("max_auto_strikes_per_carrier_per_day")
+    if type(limit) is not int or limit < 0:
+        raise ValueError("chưa có trần lỗi hãng/ngày hợp lệ")
+    used = len(ctx.tools.fault_rows(carrier_id=parcel["carrier_id"]))
+    if used >= limit:
+        ctx.log("carrier_daily_limit", carrier_id=parcel["carrier_id"], used=used, limit=limit)
+        return True
+    return False
+
+
 def _refund_gate(ctx, action, policy, order, parcel, delay):
     # KT2: tính lại quyền lợi từ DB ngay trước khi ghi tiền.
     amount = action.get("amount_vnd")
@@ -148,6 +165,9 @@ def _refund_gate(ctx, action, policy, order, parcel, delay):
         return Verdict.deny("KT2: tracking và chính sách chưa cho phép hoàn tiền")
     if amount != entitled or action.get("payer", "LOGIX") != "LOGIX":
         return Verdict.escalate("KT2: số tiền hoặc bên trả không khớp quyền lợi theo chính sách")
+    # Kiểm trước khoản hoàn đầu tiên để chuyển người không để lại giao dịch dở dang.
+    if H.carrier_at_fault(policy, parcel, delay) and _carrier_limit_reached(ctx, parcel):
+        return Verdict.escalate("Vượt trần lỗi tự động của hãng trong ngày; chuyển người trước khi ghi tiền")
     return Verdict.allow()
 
 
@@ -162,6 +182,8 @@ def _carrier_gate(ctx, action, policy, order, parcel, delay):
     target = {"parcel_id": parcel["parcel_id"], "carrier_id": carrier,
               "driver_id": driver, "delay_days": delay}
     if action["tool"] == "file_carrier_fault":
+        if _carrier_limit_reached(ctx, parcel):
+            return Verdict.escalate("Vượt trần lỗi tự động của hãng trong ngày; cần người duyệt")
         ctx.log("kt3_fault_checked", policy_id=policy["policy_id"], **target)
         if any(action.get(k) != v for k, v in target.items()):
             return Verdict.modify("KT3: sửa đối tượng và độ trễ theo tracking đã xác minh", **target)

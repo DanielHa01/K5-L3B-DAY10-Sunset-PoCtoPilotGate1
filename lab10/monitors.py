@@ -19,7 +19,22 @@ def escalation_rate(trials):
     return sum(t["status"] == "escalated" for t in trials) / max(1, len(trials))
 
 
+def carrier_daily_limit_block_rate(trials):
+    """Tỉ lệ ticket chạm trần hãng/ngày; mỗi ticket chỉ đếm một lần."""
+    return sum(any(e.get("type") == "guard" and e.get("kind") == "carrier_daily_limit"
+                   for e in t.get("events", [])) for t in trials) / max(1, len(trials))
+
+
+def ambiguous_parcel_rate(trials):
+    """Tín hiệu nhiều kiện trễ mà chưa chỉ rõ kiện, kể cả ở bản chưa có guard."""
+    return sum(not t.get("ticket", {}).get("parcel_id") and any(
+        e.get("type") == "tracking" and sum(p.get("delay", 0) > 0 for p in e.get("parcels", [])) > 1
+        for e in t.get("events", [])) for t in trials) / max(1, len(trials))
+
+
 MONITORS = {
     "escalation_rate": escalation_rate,     # có sẵn; KHÔNG tính là metric mới của đội
+    "carrier_daily_limit_block_rate": carrier_daily_limit_block_rate,
+    "ambiguous_parcel_rate": ambiguous_parcel_rate,
 }
 STARTER_MONITORS = ("escalation_rate",)
