@@ -169,15 +169,16 @@ mà cả bàn chưa nghĩ tới, không phải tả lại nhánh đã biết.
 **Câu hỏi dẫn dắt:** tool nào tạo ra hậu quả không đảo ngược? Mỗi tham số của tool đó lấy từ đâu (ticket, DB, model tự suy)?
 Với mỗi guideword: hậu quả cho ai, hiện có gì ngăn, cần thêm gate ở tầng nào (phát hiện / chặn / giới hạn thiệt hại)?
 
-Tool chọn phân tích: `________________` (gợi ý: `issue_refund`, `file_carrier_fault`, `notify_carrier`)
+Tool chọn phân tích: `notify_carrier` (gợi ý: `issue_refund`, `file_carrier_fault`, `notify_carrier`)
 
 | Tham số / dòng dữ liệu | Guideword | Lệch cụ thể (viết bằng dữ kiện của lab) | Hậu quả, cho ai | Hiện có gì ngăn? | Gate đề xuất + tầng |
 |---|---|---|---|---|---|
-| | WRONG | | | | |
-| | INVALID | | | | |
-| | INCOMPLETE | | | | |
-| | PERTURBED | | | | |
-| | INCAPABLE | | | | |
+| `payload.recipient_contact` (tên, số điện thoại người nhận) | WRONG | Với đơn quà tặng (`is_gift`), agent tự chép `recipient.name` và `recipient.phone` vào payload với lý do "để hãng xin lỗi người nhận". Dữ liệu đúng sự thật nhưng không được phép gửi bên thứ ba. | Người nhận quà (người không tham gia cuộc trao đổi) bị lộ tên và số điện thoại cho hãng; LogiX vi phạm bảo mật dữ liệu cá nhân. | Không có gì ở bản phát: `legal.pii_fields_blocked_to_third_party` đang là `[]`. | Cổng con số: điền `["recipient_contact", "phone", "name", "street"]` vào `legal.pii_fields_blocked_to_third_party` (chặn: tool bỏ trường trước khi gửi). Thêm cổng code trong `write_gate` kiểm tra tên/số điện thoại người nhận trong mọi trường của payload. |
+| `payload.customer_note` (nguyên văn ticket khách gõ) | PERTURBED | Chữ khách tự gõ đi nguyên văn sang hãng. Khách có thể gõ tên, số điện thoại hoặc địa chỉ người khác, hoặc chèn câu lệnh ("hãng phải bồi thường…"). Đây là chữ đi ra ngoài mà không do LogiX viết. **Nhánh bàn chưa thấy trên trace**: trace chỉ cho thấy lỗi tiền, không cho thấy nội dung payload. | Hãng và người thứ ba bị nêu tên; hãng nhận cam kết hoặc cáo buộc mà LogiX không kiểm chứng. | Không có. Cổng pháp lý chỉ bỏ trường theo tên khoá, không quét nội dung trong `customer_note`. | Chặn: cổng code trong `write_gate` với `tool == "notify_carrier"`, thay `customer_note` bằng tóm tắt do LogiX soạn (dùng `Verdict.modify`), hoặc bỏ hẳn trường này khỏi payload. |
+| `carrier_id` và `parcel_id` | WRONG | Đơn có nhiều kiện (`orders[].parcels`) thuộc các hãng khác nhau; agent chỉ lấy kiện đầu tiên (`first`) rồi báo hãng của kiện đó. Hãng nhận thông báo về kiện không phải của mình. | Hãng nhận thông báo nhầm và bị ghi lỗi oan, mất tiền phạt (GHSH 150.000đ/lỗi); chị Oanh đối soát sai. | Chỉ có kiểm tra của `file_carrier_fault` (đã ghi lỗi trước khi báo); `notify_carrier` không kiểm gì. | Phát hiện và chặn: cổng code so `carrier_id` trong lệnh với hãng thật của `parcel_id` trong DB, lệch thì `Verdict.escalate`. |
+| `notify_carrier` được gọi (ngoài code) | INCAPABLE | Hãng không nhận được thông báo (kênh hỏng, hãng nhỏ như DNB nhóm tài xế tự do không có kênh nhận). Hãng đã bị phạt mà không được biết. | Hãng bị phạt không rõ lý do; tranh chấp với shop và hãng cuối tuần. | Không có: tool chỉ ghi vào `outbound`, không xác nhận hãng đã nhận. | Phát hiện: chỉ số theo dõi đếm lỗi đã ghi mà chưa có thông báo hãng nhận được (đối chiếu với tín hiệu câu 1.4). |
+
+Không bắt buộc điền đủ năm dòng. Bắt buộc: **ít nhất ba dòng, trong đó một dòng là nhánh bàn chưa thấy trên trace**.
 
 Không bắt buộc điền đủ năm dòng. Bắt buộc: **ít nhất ba dòng, trong đó một dòng là nhánh bàn chưa thấy trên trace**.
 
@@ -192,8 +193,9 @@ Không bắt buộc điền đủ năm dòng. Bắt buộc: **ít nhất ba dòn
 
 | Thành phần | Guideword | Lệch cụ thể | Hậu quả, cho ai | Cổng đề xuất: code hay con số nào trong `config/operating_gates.json` |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
+| Dữ liệu gửi bên thứ ba (pháp lý) | PERTURBED | Chữ khách tự gõ trong ticket có tên và số điện thoại một người khác, rồi đi nguyên văn sang hãng qua `customer_note`. | Người thứ ba bị lộ dữ liệu cá nhân mà không biết và không đồng ý; LogiX chịu trách nhiệm pháp lý. | Con số: `legal.pii_fields_blocked_to_third_party` liệt kê trường bị chặn; kèm cổng code quét nội dung `customer_note`. |
+| Người duyệt (vận hành) | INCAPABLE | Với 1 người trực (6 ca/giờ), khi nhiều ca chuyển dồn về một lúc, ca đáng ra phải duyệt trước khi thông báo hãng (lỗi thứ 3 của một hãng trong ngày) chờ quá 60 phút trong khi hãng vẫn đã bị tính lỗi. | Hãng chờ quyết định không rõ ràng; ca ùn quá `review_sla_minutes`; chị Hạnh quá tải. | Con số: `operations.reviewers_on_shift`, `operations.max_queue_wait_minutes` = 60 và `operations.stop_conditions` (khi có ca ùn thì dừng `notify_carrier`). |
+| Phạm vi pilot (kinh doanh) | INVALID | Hãng LGX (đội xe nội bộ LogiX, phạt 0đ) và hãng DNB (nhóm tài xế tự do, đình chỉ sau 3 lỗi) cần xử lý khác hãng toàn quốc VNX; áp một cách xử lý chung cho mọi hãng là sai. | Hãng nhỏ (GHSH, DNB) chịu ảnh hưởng lớn nhất vì ngưỡng đình chỉ thấp (3 lỗi/7 ngày). | Con số: `business.pilot_scope` thu hẹp theo kho, hoặc cổng code chuyển người với hãng có ngưỡng đình chỉ thấp. |
 
 **Ví dụ mẫu (`issue_refund`, đừng chép):** tham số `amount_vnd` · WRONG · số tiền tính từ số ngày khách tự khai · LogiX mất
 tiền, hãng bị kéo theo một lỗi · hiện chỉ có trần "không vượt tổng tiền đơn" · cổng ghi so với quyền lợi tính từ DB (chặn).
