@@ -32,7 +32,7 @@ Mọi con số trong quyết định Gate 1 phải trỏ về một dòng ở đ
 | 1 | `R-base-before-20261119-160603-b45eeb` | base · base | `baseline`: đo bản chưa có cổng, chưa sửa code/config; `before` trong mã chạy là tên nội bộ của mốc base | 0,9909 (109/110); CI 95% [0,9727; 1,0000] | 0,9545 (21/22 ticket đúng cả 5/5 seed) | 20.000đ · 1 lỗi · 0 lần | 0,2273 (25/110) | Chưa đủ căn cứ chọn Tiếp tục: tuy tỉ lệ đúng và kinh doanh/vận hành đạt ngưỡng, vẫn hoàn sai 20.000đ và ghi oan hãng 1 lỗi, vi phạm hai trần an toàn bằng 0. |
 | 2 | | base · after | (cổng vòng 1, thử trước khi chốt) | | | | | |
 | 3 | | base · prepared | (cổng vòng 1 đã chốt) | | | | | |
-| 4 | | | | | | | | |
+| 4 | `R-base-before-20261119-163228-80bad3` | base · base | Chạy baseline độc lập của vai đánh giá; chưa thay đổi cổng, không tính là thử nghiệm sửa mới | 0,9909 [0,9727; 1,0000] | 0,9545 | 20.000đ · 1 lỗi · 0 lần | 0,2273 (22,73%) | Tái lập cùng kết quả baseline dòng 1; chỉ `T-002@55` hỏng. |
 
 ---
 
@@ -51,6 +51,8 @@ python3 -m lab10.gate --run runs/<mã lần chạy>/report.json
 - Khối "theo kho và hãng": **HCM** xấu nhất về an toàn trong các kho: pass_rate **0,96 (24/25)**, hoàn sai **20.000đ**, ghi oan **1 lỗi**. **VNX** xấu nhất trong các hãng: pass_rate **0,9714 (34/35)**, cùng khoản hoàn sai và lỗi oan đó; đây là hai cách phân nhóm cùng ca lỗi, không cộng thành hai tác hại riêng. Về chi phí, **DN** cao nhất trong các kho xác định được (**4.586đ/ticket**, vẫn dưới mức làm tay 10.000đ). Nhóm **`?`** cao nhất toàn bảng (**10.359đ/ticket > 10.000đ làm tay**, chuyển người 100%): ticket `T-018` không tra được đơn `O-9999`, nên không xác định được kho; không coi `?` là một kho thật. Đây là điểm cần theo dõi riêng, không phải một ngưỡng đã ký bị trượt ở mức trung bình toàn bộ.
 
 **Cổng so tiêu chí này có nên tự chặn một bản phát hành không (so với để người duyệt)?**
+
+**Đối chiếu từ vai đánh giá:** lần chạy `R-base-before-20261119-163228-80bad3` ở B0 dòng 4 có cùng các chỉ số chất lượng/an toàn, chi phí 4.203đ/ticket và ROI 1,34 nêu trên; tiết kiệm ròng 123.542đ/ngày. Tiền hoàn sai trung bình 4.000đ/ngày trên 5 seed, tổng cả bộ và ngày tệ nhất đều 20.000đ. Nguồn: `runs/R-base-before-20261119-163228-80bad3/report.json`. Phép đo `policy_selection_accuracy` bên dưới thuộc baseline dòng 1 của đồng đội, không gán sang lần chạy dòng 4.
 
 | Lý lẽ ủng hộ tự chặn | Lý lẽ phản đối |
 |---|---|
@@ -118,6 +120,8 @@ Ba loại lỗi:
 
 ### Phần 1 · Ghi lỗi (bằng chứng là mã ticket@seed và dòng trace, không tả chung chung)
 
+**Bằng chứng chung:** lần chạy `R-base-before-20261119-163228-80bad3`, file `runs/R-base-before-20261119-163228-80bad3/traces/T-002@55.json`. Số bước dưới đây đếm sự kiện từ 00 như output `lab10.trace`. Bước sai đầu tiên là **03 `model_override`**: `field="delay_days", db=2, ticket=5`; bước 02 đã có tracking đúng nhưng agent vẫn lấy lời khách đè lên. Bước 01 trích ra số khách khai chưa tự nó là lỗi; lỗi là dùng số đó làm căn cứ hành động. Hai dòng dưới là hai tác hại của cùng chuỗi nguyên nhân, không phải hai ticket độc lập.
+
 | # | Lỗi: người ta thấy gì (dán dòng trace / sổ cái) | Ai gặp, ai chịu | Hệ trọng (thấp / cao) | Loại lỗi (giới hạn hệ thống / ngữ cảnh / chìm) |
 |---|---|---|---|---|
 | 1 | **Hoàn sai 20.000đ.** `T-002@55`: bước 02 `tracking.db_delay_days=2`; bước 03 `model_override {"field":"delay_days","db":2,"ticket":5}`; bước 05 đề xuất `amount_vnd=20000`, `delay_days_used=5`; bước 06 `issue_refund` ghi 20.000đ, `payer="LOGIX"` vào sổ cái. Bước 09 báo khách "LogiX đã hoàn 20.000đ cho đơn O-1002.", bước 10 kết thúc `refunded`, trong khi nhãn yêu cầu `denied`, `refund_vnd=0`. | Khách `C-02` nhận thông báo và khoản hoàn không đúng quyền lợi; LogiX chịu 20.000đ hoàn sai; chị Oanh phải phát hiện và xử lý khi đối soát. Không có khoản trừ shop trong trace này. | Cao: vi phạm `wrongful_refund_vnd_max=0`, đã phát sinh lệnh ghi tiền. | **Lỗi chìm:** agent kết thúc như một giao dịch thành công, không báo sai; thông báo cho khách khớp sổ cái nhưng cả hai cùng sai so với quyền lợi. Lỗi chỉ lộ khi đối chiếu tracking/chính sách/nhãn. |
@@ -140,6 +144,8 @@ Ba loại lỗi:
 | Kiểu giải pháp: phản hồi cho người dùng / trao quyền kiểm soát cho người / khác | **Đề xuất cổng hệ thống trước `issue_refund`:** tính lại quyền lợi từ tracking và chính sách hiệu lực, không lấy số ngày khách tự khai làm nguồn sự thật. Chặn khoản vượt quyền lợi; nếu mâu thuẫn cần xác minh thì chuyển NV-HANH trước khi ghi tiền. Không sửa agent/prompt để xử lý riêng mã ticket. | **Đề xuất cổng hệ thống trước `file_carrier_fault`:** kiểm đúng hãng/kiện, nguyên nhân ghi nhận và điều kiện độ trễ theo DB/chính sách hiệu lực. Không đủ điều kiện thì chặn lệnh ghi lỗi và thông báo lỗi tương ứng; cần xác minh thì chuyển người trước khi ghi oan. Không chỉ kiểm có `cause="CARRIER"`. |
 | Đường đi của người sau khi có giải pháp (ví dụ: ticket chuyển sang người duyệt → duyệt → khách được trả lời) | Với ca này, dựa vào DB xác nhận trễ 2 ngày thì từ chối hoàn, sổ cái không phát sinh khoản hoàn, trả lời khách rõ lý do; nếu chuyển xác minh thì NV-HANH xem dữ kiện trước khi quyết định, không chi tiền trong lúc chờ. Với khoản sai đã ghi ở baseline, chị Oanh đối soát và đề xuất xử lý theo thẩm quyền; chưa có bằng chứng đã thu hồi. | Với ca này, không thêm lỗi VNX và không gửi thông báo quy lỗi sai. Nếu cần xác minh, NV-HANH/chị Oanh đối chiếu tracking với hãng rồi mới quyết định; NV-TUNG có thể tắt `file_carrier_fault` khi phát hiện ghi oan. Bản ghi sai đã có cần được chị Oanh rà soát và đính chính theo quy trình; chưa coi là đã được xoá hay hoàn phạt. |
 | Hệ thống học được gì (tín hiệu ghi lại để theo dõi: tên metric trong `monitors.py`) | **Đề xuất `delay_override_rate` (chưa triển khai):** số trial có sự kiện `model_override`, `field="delay_days"`, `db != ticket`, chia tổng trial. Giữ ticket/seed và hai số ngày để truy ngược; với `T-002@55`, sự kiện bước 03 kích hoạt tín hiệu. Đây là cảnh báo mâu thuẫn, chưa tự chứng minh mọi ca override đều gây thiệt hại. | **Đề xuất `carrier_fault_after_delay_override_count` (chưa triển khai):** đếm lệnh `file_carrier_fault` trong trial có override độ trễ khác DB trước đó. `T-002@55` đóng góp 1 lệnh ở bước 07. Tính từ sự kiện hoạt động, không đọc nhãn; cảnh báo cần đối soát, không thay thế kết luận ghi oan. |
+
+**Bổ sung bàn giao từ vai đánh giá:** chỉ chuyển người ở bước `file_carrier_fault` không ngăn được khoản tiền đã ghi ở `issue_refund` trước đó. Có thể cân nhắc thêm `fault_delay_mismatch_rate` để đối chiếu số ngày trong lệnh ghi lỗi với tracking đúng kiện; đếm riêng ca thiếu dữ liệu. Đây là đề xuất chưa triển khai, không thay thế hai tín hiệu trong bảng. Sau khi kỹ sư cổng bàn giao bản sửa, kiểm lại `T-002@55`, toàn bộ bộ nền và hai ticket mới B7.3 bằng mốc `after`.
 
 **Ví dụ (bộ nền, đừng chép):** `T-002@55` · sổ cái có dòng hoàn 20.000đ, hãng VNX nhận một lỗi, trong khi tracking ghi trễ 2 ngày ·
 khách không thấy gì sai, hãng chịu · cao · **lỗi chìm**. Nguồn: đầu vào (đặt sai trọng số cho con số khách tự khai). Xử lý:
