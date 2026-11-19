@@ -1,0 +1,12 @@
+{
+  "base": "R-base-before-20261119-160603-b45eeb",
+  "after": "R-base-after-20261119-174422-6e5a09",
+  "prepared": "R-base-prepared-20261119-174446-6e5a09",
+  "round1": {
+    "sha256": "32d5efc203e4dbeb8456fea3614b3f74b87998ee7a86300fad53902f4c66945c",
+    "guards_sha256": "10b5d833c156c5a11a28c40cdea9f56006ecae913ff5a696418b13fa5ce4ea4b",
+    "gates_sha256": "b5b423fafafa5a425c3f4232c2f3ad4cf05f92c30583321082415284d26e512f",
+    "taken_at": "2026-11-19T17:44:46"
+  },
+  "note": "Chốt kỹ thuật muộn sau khi nhận S6; không xác nhận điều kiện thời gian của CP3."
+}

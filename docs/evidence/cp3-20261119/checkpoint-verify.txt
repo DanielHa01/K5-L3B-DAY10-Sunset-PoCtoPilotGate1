@@ -1,0 +1,7 @@
+{
+ "ok": true,
+ "taken": true,
+ "hash": "32d5efc203e4dbeb8456fea3614b3f74b87998ee7a86300fad53902f4c66945c",
+ "problem": null,
+ "taken_at": "2026-11-19T17:44:46"
+}

@@ -1,0 +1,8 @@
+{
+ "ok": true,
+ "hash": "69d355e48fd239480d8ae2a9e66e13eb613207a40c92f7f872fd034d3558f292",
+ "signed_hash": "69d355e48fd239480d8ae2a9e66e13eb613207a40c92f7f872fd034d3558f292",
+ "expect_hash": null,
+ "problem": null,
+ "signed_at": "2026-11-19T15:52:32"
+}

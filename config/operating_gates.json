@@ -21,9 +21,12 @@
       "Khi có 1 lỗi ghi oan cho hãng thì NV-TUNG tắt file_carrier_fault",
       "Khi có 1 lần lộ dữ liệu cá nhân cho bên thứ ba thì NV-TUNG tắt notify_carrier",
       "Khi có ca chờ duyệt quá 60 phút hoặc hết ca chưa tới lượt thì tạm dừng hoặc thu hẹp phạm vi pilot",
-      "Khi tổng hoàn tự động vượt 2.000.000 đồng/ngày thì tạm dừng hoàn tự động"
+      "Khi tổng hoàn tự động vượt 2.000.000 đồng/ngày thì tạm dừng hoàn tự động",
+      "Khi thời gian chờ người duyệt đạt 45 phút thì NV-TUNG dừng nhận xử lý tự động mới trong tối đa 5 phút để giữ khoảng đệm trước SLA 60 phút",
+      "Khi tổng chi phí vượt 8.000 đồng/ticket hoặc ROI dưới 0,25 thì NV-TUNG tạm dừng phạm vi chưa đạt và yêu cầu đo lại",
+      "Khi chi phí LLM của một ticket vượt 1.500 đồng thì NV-TUNG tạm dừng xử lý tự động và rà ngân sách đọc"
     ],
-    "alert_channel": "",
+    "alert_channel": "gate1-ops-sunset (nhật ký cảnh báo nội bộ của bài mô phỏng)",
     "decision_note": false,
     "review_sampling_pct": 0
   },

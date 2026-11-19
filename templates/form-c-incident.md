@@ -1,6 +1,8 @@
 # Phiếu C · Sự cố và quyết định v2 · Khối 3 (phút 125–200)
 
-**Bàn:** ______ · **Thẻ đã bốc:** ___ *(để trống tới phút 125; bốc số xong thì ghi đúng số đó, ví dụ `S3`. Lab Coach đối chiếu với sổ; lệnh tự kiểm tra in dòng này trong report.)*
+**Bàn:** Sunset · **Thẻ đã bốc:** S6 *(để trống tới phút 125; bốc số xong thì ghi đúng số đó, ví dụ `S3`. Lab Coach đối chiếu với sổ; lệnh tự kiểm tra in dòng này trong report.)*
+
+**Lưu ý về mốc so sánh:** snapshot prepared `32d5efc2` được tạo bổ sung lúc 2026-11-19T17:44:46 GMT+7, sau khi đã nhận S6. Nhóm em dùng nó để cố định bản kỹ thuật trước các sửa tiếp theo, không coi là bằng chứng chuẩn bị trước sự cố. Chi tiết ở B8 và `docs/cp3-report.md`; các kết quả S6 dưới đây chỉ điền sau khi thực sự chạy.
 
 Mở `incidents/Sx/card.md` của đúng số đã bốc. Các bước trên thẻ trỏ về đúng mục trong phiếu này. Mục C3 chỉ điền phần ứng với
 số thẻ của bàn; các phần khác để trống.

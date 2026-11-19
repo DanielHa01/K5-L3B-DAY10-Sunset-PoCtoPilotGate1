@@ -1,0 +1,69 @@
+{
+  "checked_at": "2026-11-19T17:50:26+07:00",
+  "scope": "Bổ sung hồ sơ CP3, không phải kết luận chấm lab",
+  "criteria": {
+    "ok": true,
+    "hash": "69d355e48fd239480d8ae2a9e66e13eb613207a40c92f7f872fd034d3558f292",
+    "signed_hash": "69d355e48fd239480d8ae2a9e66e13eb613207a40c92f7f872fd034d3558f292",
+    "expect_hash": null,
+    "problem": null,
+    "signed_at": "2026-11-19T15:52:32"
+  },
+  "checkpoint": {
+    "ok": true,
+    "taken": true,
+    "hash": "32d5efc203e4dbeb8456fea3614b3f74b87998ee7a86300fad53902f4c66945c",
+    "problem": null,
+    "taken_at": "2026-11-19T17:44:46"
+  },
+  "locked_files": {
+    "ok": true,
+    "changed": [],
+    "manifest": "MANIFEST.json"
+  },
+  "reports": {
+    "after": {
+      "run_id": "R-base-after-20261119-174422-6e5a09",
+      "hash_matches_current": true,
+      "all_signed_thresholds_met": true,
+      "newly_failed": [],
+      "violations": [],
+      "trials": 110,
+      "pass_rate": 1.0
+    },
+    "prepared": {
+      "run_id": "R-base-prepared-20261119-174446-6e5a09",
+      "hash_matches_current": true,
+      "all_signed_thresholds_met": true,
+      "newly_failed": [],
+      "violations": [],
+      "trials": 110,
+      "pass_rate": 1.0
+    }
+  },
+  "public_tests_passed": 13,
+  "form_b_sections": [
+    "B0",
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "B5",
+    "B6",
+    "B7",
+    "B8"
+  ],
+  "drawn_card": {
+    "recorded": {
+      "templates/form-c-incident.md": "S6"
+    },
+    "status": "khớp"
+  },
+  "chronology": {
+    "snapshot_after_incident_received": true,
+    "instructor_exception_recorded": false,
+    "pre_incident_requirement_confirmed": false
+  },
+  "decision_v1": "Cải tiến thêm",
+  "cp4_cp5_complete": false
+}
