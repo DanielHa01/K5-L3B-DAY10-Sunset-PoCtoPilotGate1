@@ -13,7 +13,7 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; bàn 3 người th
 
 | STT | Họ và tên | MSSV | Vai | Trưởng nhóm |
 | --: | --------- | ---- | --- | :---------: |
-|   1 |           |      |     |             |
+|   1 |     Hà Phan Đại Dương      |   2A202604119   |  Sản phẩm và kinh doanh   |      Có       |
 |   2 |           |      |     |             |
 |   3 |           |      |     |             |
 |   4 |           |      |     |             |
