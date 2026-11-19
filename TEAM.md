@@ -15,7 +15,7 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; bàn 3 người th
 | --: | --------- | ---- | --- | :---------: |
 |   1 |     Hà Phan Đại Dương      |   2A202604119   |  Sản phẩm và kinh doanh   |      Có       |
 |   2 | Nguyễn Hữu An          | 2A202604024     | Kỹ sư cổng    | Không            |
-|   3 |           |      |     |             |
+|   3 | Lê Bá Nguyên | 2A202604100 | Vận hành và pháp lý | Không |
 |   4 |           |      |     |             |
 
 Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, khớp bảng trên.
